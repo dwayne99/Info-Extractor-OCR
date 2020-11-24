@@ -26,6 +26,24 @@ class Uploader extends Component {
             isLoading:"Extracting the data",
             files:files
         });
+
+        const UID = Math.round(1+Math.random() * (100000-5));
+        alert(UID);
+        var data = {
+            fileExt:"png",
+            imageID: UID,
+            folder: UID,
+            img: this.state.files[0].base64
+        };
+
+        await fetch("https://2vdoldu1ma.execute-api.ap-south-1.amazonaws.com/Production",{
+            method: "POST",
+            headers:{
+                Accept:"application/json",
+                "content-Type":"application/json",
+            },
+            body:JSON.stringify(data)
+        });
     }
 
     render() {
@@ -38,7 +56,6 @@ class Uploader extends Component {
                             <h3 className="text-danger">{processing}</h3>
                             <h6>Upload PAN card</h6>
                             <FormText color="muted">PNG,JPG,JPEG</FormText>
-
                             <div className="form-group files color">
                                 <FileBase64 multiple={true} onDone={this.getFiles.bind(this)}></FileBase64>
                             </div>
