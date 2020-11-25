@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Form, FormGroup, Label, FormText, Input} from "reactstrap";
+import {Button, Form, FormGroup, Label, FormText, Input, Jumbotron} from "reactstrap";
 import FileBase64 from 'react-file-base64';
 
 import "./uploader.css";
@@ -98,15 +98,17 @@ class Uploader extends Component {
         const processing = this.state.confirmation;
         return ( 
             <div className="row">
-                <div className="col-6 offset-3">
+                <div className="col-8 offset-2">
                     <Form onSubmit={this.handleSubmit}>
                         <FormGroup>
                             <h3 className="text-danger">{processing}</h3>
-                            <h6>Upload PAN card</h6>
+                            <Jumbotron> 
+                                <h3>Upload PAN card</h3>
                             <FormText color="muted">PNG,JPG,JPEG</FormText>
                             <div className="form-group files color">
                                 <FileBase64 multiple={true} onDone={this.getFiles.bind(this)}></FileBase64>
                             </div>
+                            </Jumbotron>
                         </FormGroup>
 
                         {/* PAN-1 : Render this part only if theres a single PAN */}
@@ -125,7 +127,7 @@ class Uploader extends Component {
                                     <Label><h6>Date of Birth</h6></Label>
                                     <Input type="text" name="dob" id="dob" required value={this.DATA[0].dob} onChange={this.handleChange}/>
                                 </FormGroup>
-                                <Button className="btn btn-lg btn-block btn-success">
+                                <Button className="btn btn-lg btn-block xbutton">
                                     <a href={this.state.link}>Download</a>
                                 </Button>
                             </div>
@@ -137,7 +139,7 @@ class Uploader extends Component {
                         {
                         this.state.infoAvailable && this.state.files.length>1?
                             <div id="multiple"> 
-                                <Button className="btn btn-lg btn-block btn-success">
+                                <Button className="btn btn-lg btn-block xbutton">
                                     <a href={this.state.link}>Download</a>
                                 </Button>
                             </div>

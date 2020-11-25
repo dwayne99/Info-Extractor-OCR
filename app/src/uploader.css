@@ -1,3 +1,7 @@
+#root{
+    background-color: #c6b497;
+}
+
 .files input {
     outline: 2px dashed #92b0b3;
     outline-offset: -10px;
@@ -38,7 +42,7 @@
 }
 
 .color input {
-    background-color: #f1f1f1;
+    background-color: #34626c;
 }
 
 .files:before {
@@ -52,8 +56,12 @@
     content: " or drag it here. ";
     display: block;
     margin: 0 auto;
-    color: #2ea591;
+    color: #cfd3ce;
     font-weight: 600;
     text-transform: capitalize;
     text-align: center;
+}
+.btn{
+    background-color: #34626c;
+    color: #cfd3ce;
 }
