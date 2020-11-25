@@ -53,7 +53,7 @@ npm start
 
 ## Usage
 You could check the hosted website <a href="http://react-info-extractor-web-app.s3-website.ap-south-1.amazonaws.com/">here</a>.
-Also please do note that you would have to download and enable ```Allow CORS``` Chrome extension if your browser blocks it or else it wouldn't work. 
+Also please do note that you would have to download and enable ```Allow CORS``` Chrome extension(if your browser blocks CORS by default) or else it wouldn't work. 
 <a href="https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en">Allow CORS: Chrome Extension</a>
 
 ## Contributing
