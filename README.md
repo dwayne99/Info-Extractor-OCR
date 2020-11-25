@@ -50,6 +50,12 @@ cd my-app
 npm start
 ```
 3. AWS account
+4. AWS website hosting commands:
+```
+npm run-script build  
+cd build
+aws s3 sync . s3://BUCKET_NAME
+```
 
 ## Usage
 You could check the hosted website <a href="http://react-info-extractor-web-app.s3-website.ap-south-1.amazonaws.com/">here</a>.
