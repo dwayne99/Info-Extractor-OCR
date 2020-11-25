@@ -77,9 +77,9 @@ class Uploader extends Component {
         const OCR_text = await response.json();
         console.log(OCR_text);
         this.setState({
-            "PAN":OCR_text.body[0],
-            "name":OCR_text.body[1],
-            "dob":OCR_text.body[2],
+            "PAN":OCR_text.body.pan,
+            "name":OCR_text.body.name,
+            "dob":OCR_text.body.dob,
         })
 
         this.setState({confirmation:""});
