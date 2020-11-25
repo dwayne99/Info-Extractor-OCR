@@ -8,14 +8,29 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons'
 
 class Uploader extends Component {
-    state = {  
-        confirmation:"",
-        isLoading : "",
-        files :"",
-        PAN:"",
-        name:"",
-        dob:"",
+
+    constructor(props){
+        super(props);
+        this.state = {  
+            confirmation:"",
+            isLoading : "",
+            files :"",
+            PAN:"",
+            name:"",
+            dob:"",
+        }
+        this.handleChange = this.handleChange.bind(this);
     }
+
+    handleChange(event){
+        event.preventDefault();
+        const target = event.target;
+        const value = event.value;
+        const name = event.name;
+
+        this.setState({name:value});
+    }
+
     async handleSubmit(event){
         event.preventDefault();
         this.setState({confirmation:"Uploading the document..."});
@@ -28,7 +43,6 @@ class Uploader extends Component {
         });
 
         const UID = Math.round(1+Math.random() * (100000-5));
-        alert(UID);
         var data = {
             fileExt:"png",
             imageID: UID,
@@ -36,18 +50,45 @@ class Uploader extends Component {
             img: this.state.files[0].base64
         };
 
-        await fetch("https://2vdoldu1ma.execute-api.ap-south-1.amazonaws.com/Production",{
+        this.setState({confirmation:"Wait while the file is being processed..."})
+
+        await fetch("https://2vdoldu1ma.execute-api.ap-south-1.amazonaws.com/Production",
+        {
             method: "POST",
             headers:{
                 Accept:"application/json",
-                "content-Type":"application/json",
+                "content-Type":"application.json",
             },
             body:JSON.stringify(data)
         });
+
+        let targetImage = UID + ".png";
+        const response = await fetch("https://2vdoldu1ma.execute-api.ap-south-1.amazonaws.com/Production/ocr",
+        {
+            method: "POST",
+            headers:{
+                Accept:"application/json",
+                "content-Type":"application.json",
+            },
+            body:JSON.stringify(targetImage)
+        });
+        console.log(JSON.stringify(targetImage));
+
+        const OCR_text = await response.json();
+        console.log(OCR_text);
+        this.setState({
+            "PAN":OCR_text.body[0],
+            "name":OCR_text.body[1],
+            "dob":OCR_text.body[2],
+        })
+
+        this.setState({confirmation:""});
+
+        // console.log(this.state);
     }
 
     render() {
-        const processing = "Please wait while the document is being processed..";
+        const processing = this.state.confirmation;
         return ( 
             <div className="row">
                 <div className="col-6 offset-3">
@@ -62,15 +103,15 @@ class Uploader extends Component {
                         </FormGroup>
                         <FormGroup>
                             <Label><h6>Permanent Account Number</h6></Label>
-                            <Input type="text" name="pan" id="pan" required value={this.state.PAN}/>
+                            <Input type="text" name="pan" id="pan" required value={this.state.PAN} onChange={this.handleChange}/>
                         </FormGroup>
                         <FormGroup>
                             <Label><h6>Name</h6></Label>
-                            <Input type="text" name="name" id="name" required value={this.state.name}/>
+                            <Input type="text" name="name" id="name" required value={this.state.name} onChange={this.handleChange}/>
                         </FormGroup>
                         <FormGroup>
                             <Label><h6>Date of Birth</h6></Label>
-                            <Input type="text" name="dob" id="dob" required value={this.state.dob}/>
+                            <Input type="text" name="dob" id="dob" required value={this.state.dob} onChange={this.handleChange}/>
                         </FormGroup>
                         <Button className="btn btn-lg btn-block btn-success">Submit</Button>
                     </Form>
