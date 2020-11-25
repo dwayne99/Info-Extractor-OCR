@@ -15,10 +15,11 @@ class Uploader extends Component {
             confirmation:"",
             isLoading : "",
             files :"",
-            PAN:"",
-            name:"",
-            dob:"",
+            link: "data:application/octet-stream,PAN%2CName%2CDOB",
+            infoAvailable:false
         }
+
+        this.DATA = [];
         this.handleChange = this.handleChange.bind(this);
     }
 
@@ -33,7 +34,7 @@ class Uploader extends Component {
 
     async handleSubmit(event){
         event.preventDefault();
-        this.setState({confirmation:"Uploading the document..."});
+        // this.setState({confirmation:"Hope you liked the Service"});
     }
 
     async getFiles(files){
@@ -42,50 +43,56 @@ class Uploader extends Component {
             files:files
         });
 
-        const UID = Math.round(1+Math.random() * (100000-5));
-        var data = {
-            fileExt:"png",
-            imageID: UID,
-            folder: UID,
-            img: this.state.files[0].base64
-        };
+        for(var i = 0; i < this.state.files.length; i++){
 
-        this.setState({confirmation:"Wait while the file is being processed..."})
+            const UID = Math.round(1+Math.random() * (100000-5));
+            var data = {
+                fileExt:"png",
+                imageID: UID,
+                folder: UID,
+                img: this.state.files[i].base64
+            };
 
-        await fetch("https://2vdoldu1ma.execute-api.ap-south-1.amazonaws.com/Production",
-        {
-            method: "POST",
-            headers:{
-                Accept:"application/json",
-                "content-Type":"application.json",
-            },
-            body:JSON.stringify(data)
-        });
+            this.setState({confirmation:"Wait while the file is being processed..."})
 
-        let targetImage = UID + ".png";
-        const response = await fetch("https://2vdoldu1ma.execute-api.ap-south-1.amazonaws.com/Production/ocr",
-        {
-            method: "POST",
-            headers:{
-                Accept:"application/json",
-                "content-Type":"application.json",
-            },
-            body:JSON.stringify(targetImage)
-        });
-        console.log(JSON.stringify(targetImage));
+            await fetch("https://2vdoldu1ma.execute-api.ap-south-1.amazonaws.com/Production",
+            {
+                method: "POST",
+                headers:{
+                    Accept:"application/json",
+                    "content-Type":"application.json",
+                },
+                body:JSON.stringify(data)
+            });
 
-        const OCR_text = await response.json();
-        console.log(OCR_text);
+            let targetImage = UID + ".png";
+            const response = await fetch("https://2vdoldu1ma.execute-api.ap-south-1.amazonaws.com/Production/ocr",
+            {
+                method: "POST",
+                headers:{
+                    Accept:"application/json",
+                    "content-Type":"application.json",
+                },
+                body:JSON.stringify(targetImage)
+            });
+
+            const OCR_text = await response.json();
+            this.DATA.push({
+                "PAN":OCR_text.body.pan,
+                "name":OCR_text.body.name,
+                "dob":OCR_text.body.dob,
+            })
+            this.state.link += "%0A"+ OCR_text.body.pan.split(' ').join('%20')+"%2C"+OCR_text.body.name.split(' ').join('%20')+"%2C" + OCR_text.body.dob.split(' ').join('%20');
+
+        }
         this.setState({
-            "PAN":OCR_text.body.pan,
-            "name":OCR_text.body.name,
-            "dob":OCR_text.body.dob,
-        })
+            confirmation:"",
+            infoAvailable:true
+        });
 
-        this.setState({confirmation:""});
-
-        // console.log(this.state);
+        console.log(this.DATA);
     }
+
 
     render() {
         const processing = this.state.confirmation;
@@ -101,19 +108,43 @@ class Uploader extends Component {
                                 <FileBase64 multiple={true} onDone={this.getFiles.bind(this)}></FileBase64>
                             </div>
                         </FormGroup>
-                        <FormGroup>
-                            <Label><h6>Permanent Account Number</h6></Label>
-                            <Input type="text" name="pan" id="pan" required value={this.state.PAN} onChange={this.handleChange}/>
-                        </FormGroup>
-                        <FormGroup>
-                            <Label><h6>Name</h6></Label>
-                            <Input type="text" name="name" id="name" required value={this.state.name} onChange={this.handleChange}/>
-                        </FormGroup>
-                        <FormGroup>
-                            <Label><h6>Date of Birth</h6></Label>
-                            <Input type="text" name="dob" id="dob" required value={this.state.dob} onChange={this.handleChange}/>
-                        </FormGroup>
-                        <Button className="btn btn-lg btn-block btn-success">Submit</Button>
+
+                        {/* PAN-1 : Render this part only if theres a single PAN */}
+                        {
+                        this.state.infoAvailable && this.state.files.length==1?
+                            <div id="single">   
+                                <FormGroup id="pan_form" >
+                                    <Label><h6>Permanent Account Number</h6></Label>
+                                    <Input type="text" name="pan" id="pan" required value={this.DATA[0].PAN} onChange={this.handleChange}/>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label><h6>Name</h6></Label>
+                                    <Input type="text" name="name" id="name" required value={this.DATA[0].name} onChange={this.handleChange}/>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Label><h6>Date of Birth</h6></Label>
+                                    <Input type="text" name="dob" id="dob" required value={this.DATA[0].dob} onChange={this.handleChange}/>
+                                </FormGroup>
+                                <Button className="btn btn-lg btn-block btn-success">
+                                    <a href={this.state.link}>Download</a>
+                                </Button>
+                            </div>
+                        :null
+                        }
+                        {/* End of PAN-1 */}
+
+                        {/* PAN-Multiple : Render this part only if there are multiple PANs */}
+                        {
+                        this.state.infoAvailable && this.state.files.length>1?
+                            <div id="multiple"> 
+                                <Button className="btn btn-lg btn-block btn-success">
+                                    <a href={this.state.link}>Download</a>
+                                </Button>
+                            </div>
+                        :null
+                        }
+                        {/* End of  PAN-Multiple */}
+
                     </Form>
                 </div>
             </div>
