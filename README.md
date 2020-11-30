@@ -2,7 +2,12 @@
 
 Info-Extractor-OCR is a real-time Serverless OCR web app that would help extract PAN card details such as the Name, Permanent Account Number(PAN), and the Date of Birth. Images(.jpg,.jpeg,.png) can be processed and they can then be downloaded as structured data in CSV-format.
 
-![Info-Extractor demo](textract.gif)
+
+
+<p align="center">
+<img src="textract.gif" style="text-align: center;"></img>
+</p>
+
 
 **Technologies used:**
 * **AWS services:** API-Gateways, LambdaFunctions, Textract, S3
@@ -11,7 +16,10 @@ Info-Extractor-OCR is a real-time Serverless OCR web app that would help extract
 * **NodeJS:** Backend
 
 ## Project Architecture
+
+<p align="center">
 <img src="extras/serverless_ocr_architecture.png" style="text-align: center;"></img>
+</p>
 
 **1. React:**
 * React (also known as React.js or ReactJS) is an open-source, front end, JavaScript library for building user interfaces or UI components.
